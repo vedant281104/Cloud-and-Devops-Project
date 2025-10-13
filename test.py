@@ -5,21 +5,22 @@ from io import BytesIO
 from deep_translator import GoogleTranslator
 from textblob import TextBlob  # Sentiment analysis
 
+
 # Function to fetch news (always in English for consistency)
 def fetch_news(api_key, category):
     base_url = "https://newsapi.org/v2/top-headlines"
     params = {
-        'category': category,
-        'apiKey': api_key,
-        'language': 'en',   # Always English
-        'pageSize': 5
+        "category": category,
+        "apiKey": api_key,
+        "language": "en",  # Always English
+        "pageSize": 5,
     }
     response = requests.get(base_url, params=params)
     if response.status_code == 200:
         return response.json().get("articles", [])
-    else:
-        st.error(f"Error fetching news: {response.status_code}")
-        return []
+    st.error(f"Error fetching news: {response.status_code}")
+    return []
+
 
 # Function to translate text
 def translate_text(text, lang):
@@ -30,16 +31,17 @@ def translate_text(text, lang):
     except Exception:
         return text
 
+
 # Function for sentiment analysis
 def analyze_sentiment(text):
     blob = TextBlob(text)
     polarity = blob.sentiment.polarity  # -1 (negative) → +1 (positive)
     if polarity > 0.1:
         return "😊 Positive"
-    elif polarity < -0.1:
+    if polarity < -0.1:
         return "😞 Negative"
-    else:
-        return "😐 Neutral"
+    return "😐 Neutral"
+
 
 # Map Streamlit language options → gTTS codes
 gtts_lang_map = {
@@ -51,7 +53,7 @@ gtts_lang_map = {
     "ru": "ru",
     "ar": "ar",
     "hi": "hi",
-    "ta": "ta"  # Tamil
+    "ta": "ta",  # Tamil
 }
 
 # Streamlit UI
@@ -61,19 +63,23 @@ st.write("Fetch the latest news articles based on your preferences.")
 api_key = "226e3dde4bea489586c585251cb7b293"  # Your API key
 
 # Language options supported
-language = st.selectbox("Select language:",
-                        ["en", "fr", "es", "de", "it", "ru", "ar", "hi", "ta"])  # Added Tamil
+language = st.selectbox(
+    "Select language:",
+    ["en", "fr", "es", "de", "it", "ru", "ar", "hi", "ta"],
+)
 
 # Categories
-category = st.selectbox("Select a category:",
-                        ["business", "entertainment", "general", "health", "science", "sports", "technology"])
+category = st.selectbox(
+    "Select a category:",
+    ["business", "entertainment", "general", "health", "science", "sports", "technology"],
+)
 
 if st.button("Get News"):
     articles = fetch_news(api_key, category)
 
     if articles:
         for i, article in enumerate(articles):
-            # English text (fix: force fallback if None)
+            # English text (fallback if None)
             title_en = article.get("title") or "No Title"
             desc_en = article.get("description") or "No description available"
 
@@ -112,3 +118,5 @@ if st.button("Get News"):
             st.write("---")
     else:
         st.warning("No news found. Try another category.")
+
+# Ensure newline at end of file
