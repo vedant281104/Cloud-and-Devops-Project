@@ -71,7 +71,8 @@ language = st.selectbox(
 # Categories
 category = st.selectbox(
     "Select a category:",
-    ["business", "entertainment", "general", "health", "science", "sports", "technology"],
+    ["business", "entertainment", "general", "health",
+     "science", "sports", "technology"],
 )
 
 if st.button("Get News"):
@@ -90,9 +91,10 @@ if st.button("Get News"):
             # Show news
             st.subheader(title)
             st.write(desc)
-            st.write(f"[Read more]({article.get('url', '')})")
+            url = article.get("url", "")
+            st.write(f"[Read more]({url})")  # noqa: E501
 
-            # Sentiment analysis (safe concatenation)
+            # Sentiment analysis
             sentiment = analyze_sentiment(f"{title_en} {desc_en}")
             st.write(f"🧠 Sentiment: {sentiment}")
 
@@ -103,15 +105,10 @@ if st.button("Get News"):
                     try:
                         tts_lang = gtts_lang_map.get(language, "en")
                         tts = gTTS(text=text_to_read, lang=tts_lang)
-
-                        # Save to memory instead of file
                         audio_buffer = BytesIO()
                         tts.write_to_fp(audio_buffer)
                         audio_buffer.seek(0)
-
-                        # Play directly
                         st.audio(audio_buffer, format="audio/mp3")
-
                     except Exception as e:
                         st.error(f"TTS Error: {e}")
 
@@ -119,4 +116,5 @@ if st.button("Get News"):
     else:
         st.warning("No news found. Try another category.")
 
-# Ensure newline at end of file
+
+# Newline at end of file
