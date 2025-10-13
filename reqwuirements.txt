@@ -1,0 +1,7 @@
+streamlit
+requests
+gtts
+deep-translator
+textblob
+pytest
+flake8
